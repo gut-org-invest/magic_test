@@ -51,10 +51,14 @@
     if (!evt.target.labels) {
       return;
     }
-    var label = evt.target.labels[0].textContent;
     var text = (evt.target.value + charStr).trim().replace("'", "\\\'");
     var action = "fill_in";
-    var target = evt.target.labels[0].textContent;
+    var target = 'fixme';
+    if (evt.target.labels.length != 0){
+      target = evt.target.labels[0].textContent;       
+    } else {
+      target = evt.target.id;
+    }
     var options = ", with: '" + text + "'";
     var testingOutput = JSON.parse(sessionStorage.getItem("testingOutput"));
     var lastAction = testingOutput[testingOutput.length - 1];
