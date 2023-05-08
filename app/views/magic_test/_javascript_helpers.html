@@ -1,10 +1,19 @@
 <script text="text/javascript">
 
-  ready(function() {
+  function magic_test_read() {
     console.log("🪄 Magic Test activated in the browser!")
     initializeStorage();
     initializeMutationObserver();
-  });
+  };
+
+  function firstDefinedNotBlank(arr) {
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i] !== undefined && arr[i] !== null && arr[i].toString().trim() !== '') {
+        return arr[i];
+      }
+    }
+    return null;
+  }
 
   function clickFunction(event) {
     var element = event.target
@@ -12,14 +21,7 @@
     var action = ""
     var target = ""
     var options = ""
-    if (tagName == "BUTTON" || tagName == "A" || (tagName == "INPUT" && element.type == 'submit')) {
-      action = "click_on"
-      target = element.value || element.text
-      if (!target) {
-        return;
-      }
-      target = "\'" + target.trim().replace("'", "\\\'") + "\'"
-    } else if (tagName == "INPUT") {
+    if (tagName == "INPUT" && element.type != 'submit') {
       let ignoreType = ['text', 'password', 'date', 'email', 'month', 'number', 'search']
       if (ignoreType.includes(element.type)) {
         return;
@@ -27,7 +29,15 @@
       var path = getPathTo(element)
       action = `find(:xpath, '${path}').click`
     } else {
-      return;
+      action = "click_on"
+      target = firstDefinedNotBlank([element.value, element.text , element.id, element.parentElement.id, element.textContent]); 
+
+      if (!target) {
+        var path = getPathTo(element)
+        action = `find(:xpath, '${path}').click`
+      } else {
+        target = "\'" + target.trim().replace("'", "\\\'") + "\'"
+      }
     }
     var testingOutput = JSON.parse(sessionStorage.getItem("testingOutput"));
     testingOutput.push({action: action, target: target, options: options });
